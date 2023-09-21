@@ -1,36 +1,39 @@
 const express = require('express');
 const app = express();
+const db = require('./database.js');
 
 app.use(express.json());
 
-const vehicles = [ // Data of vehicles
-    { id: 1, name: 'Sedan', booked: false, time: 0 },
-    { id: 2, name: 'SUV', booked: false, time: 0 },
-    { id: 3, name: 'Hatchback', booked: false, time: 0 },
-];
-
-app.get('/vehicles', (req, res) => { // To get info of all vehicles
-    res.json(vehicles); 
+app.get('/vehicles', async (req, res) => { // To get info of all vehicles
+    let vehicles = await db.execute('Select * FROM task.task');
+    res.json(vehicles[0]); 
 });
 
-app.get('/vehicles-available', (req,res) => { // To get info of all available vehicles
+app.get('/vehicles-available', async (req,res) => { // To get info of all available vehicles
     let arr = []
-    vehicles.forEach(vehicle => {
+    let vehicles = await db.execute('Select * FROM task.task');
+    vehicles[0].forEach(vehicle => {
         if(!vehicle.booked) arr.push(vehicle);
     });
 
     res.json(arr);
 });
 
-app.get('/vehicle-book/:id', (req,res)=>{ // To book a vehicle with id and specific time
+app.get('/vehicle-book/:id', async (req,res)=>{ // To book a vehicle with id and specific time
     const idHere = req.params.id;
     const timeHere = req.query.t;
 
-    vehicles.forEach(vehicle=>{
+    let vehicles = await db.execute('Select * FROM task.task');
+
+    vehicles[0].forEach(async (vehicle)=>{
         if(vehicle.id==idHere){
+
             vehicle.booked = true;
             vehicle.time = timeHere;
-            res.json(vehicles);
+
+            await db.execute(`UPDATE task.task SET booked = 1, time = ${timeHere} WHERE id = ${vehicle.id};`);
+
+            res.redirect('/vehicles');
         }
     })
 
