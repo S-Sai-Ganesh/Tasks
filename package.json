@@ -1,0 +1,16 @@
+{
+  "name": "documents",
+  "version": "1.0.0",
+  "description": "",
+  "main": "task3.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node task3"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mysql2": "^3.6.1"
+  }
+}
